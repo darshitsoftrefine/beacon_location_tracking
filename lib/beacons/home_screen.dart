@@ -1,5 +1,5 @@
 import 'package:beacon_broadcast/beacon_broadcast.dart';
-import 'package:beacon_project/beacon_library.dart';
+import 'package:beacon_project/beacons/beacon_library.dart';
 import 'package:beacon_project/maps/location_data.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -32,6 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
     beaconBroadcast.setUUID(uuid.v1())
         .setMajorId(1)
         .setMinorId(100)
+        .setTransmissionPower(-59)//iOS-only, optional
+        .setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
+        .setManufacturerId(0x004C)
         .start();
     bool? isAdvertising = await beaconBroadcast.isAdvertising();
     print(isAdvertising);
@@ -96,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }, child: const Text("Go to Beacons")),
 
-          const SizedBox(height: 100,),
+          const SizedBox(height: 50,),
           ElevatedButton(onPressed: () async {
             LocationData loc = await Location().getLocation();
             lat = loc.latitude!;
@@ -106,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           }, child: const Text("Get Location")),
 
-          Text(lat.toString() + long.toString(), style: const TextStyle(fontSize: 20),)
+          Text("Latitude: " +lat.toString() + '\n' + "Longitude: " + long.toString(), style: const TextStyle(fontSize: 20),),
         ],
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){

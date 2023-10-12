@@ -63,15 +63,18 @@ class LocationMapState extends State<LocationMap> {
     }
 // Get the location data
     LocationData locationData = await location.getLocation();
-    setState(() {
+    if(mounted) {
+      setState(() {
 // Set the current position and marker
-      currentPosition = LatLng(locationData.latitude!, locationData.longitude!);
-      marker = Marker(
-        markerId: const MarkerId('current'),
-        position: currentPosition,
-      );
-      _isLoading = false;
-    });
+        currentPosition =
+            LatLng(locationData.latitude!, locationData.longitude!);
+        marker = Marker(
+          markerId: const MarkerId('current'),
+          position: currentPosition,
+        );
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -83,14 +86,18 @@ class LocationMapState extends State<LocationMap> {
       body: _isLoading ? const Center(child: CircularProgressIndicator(),) : GoogleMap(initialCameraPosition: CameraPosition(target: currentPosition, zoom: 15),
         markers: {marker},
       ),
-      floatingActionButton: SizedBox(
-        width: 60,
-        height: 60,
-        child: FloatingActionButton(onPressed: (){
-          print(currentPosition);
-        },
-          tooltip: 'Open Google Maps',
-          child: const Icon(Icons.share)
+      floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 28.0),
+        child: SizedBox(
+          width: 60,
+          height: 60,
+          child: FloatingActionButton(onPressed: (){
+            print(currentPosition);
+          },
+            tooltip: 'Open Google Maps',
+            child: const Icon(Icons.share)
+          ),
         ),
       ),
     );

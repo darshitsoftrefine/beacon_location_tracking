@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:beacon_project/beacons/beacons_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
@@ -76,7 +77,9 @@ class _BeaconLibraryState extends State<BeaconLibrary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Ranging, Monitoring Beacons"),
+      ),
       body: Column(
         children: [
           ElevatedButton(onPressed: (){
@@ -89,7 +92,16 @@ class _BeaconLibraryState extends State<BeaconLibrary> {
           SizedBox(height: 40,),
           ElevatedButton(onPressed: (){
             monitoringbeacon();
-          }, child: Text("Monitor"))
+          }, child: Text("Monitor")),
+
+
+          SizedBox(height: 100,),
+          ElevatedButton(onPressed: (){
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BeaconsScan()),
+            );
+            }, child: Text("Go to Beacons Plugin"))
         ],
       ),
     );
