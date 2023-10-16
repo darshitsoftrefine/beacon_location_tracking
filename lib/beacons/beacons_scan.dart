@@ -16,24 +16,19 @@ class _BeaconsScanState extends State<BeaconsScan> {
 
   @override
   void initState(){
+    debugPrint("Init Called");
+    BeaconsPlugin.addRegion("myBeacon", "01022022-f88f-0000-00ae-9605fd9bb620");
+    startScanning();
     super.initState();
-    scanResults();
+    // scanResults();
   }
 
-  Future<void> ranging() async {
-    // if you need to monitor also major and minor use the original version and not this fork
-    BeaconsPlugin.addRegion("myBeacon", "01022022-f88f-0000-00ae-9605fd9bb620").then((result) {
-      print("hi range");
-    });
-
-    //Send 'true' to run in background [OPTIONAL]
-    await BeaconsPlugin.runInBackground(true);
-
-    //IMPORTANT: Start monitoring once scanner is setup & ready (only for Android)
+  startScanning() async {
     if (Platform.isAndroid) {
       BeaconsPlugin.channel.setMethodCallHandler((call) async {
         if (call.method == 'scannerReady') {
           await BeaconsPlugin.startMonitoring();
+          print("Scanning");
         }
       });
     } else if (Platform.isIOS) {
@@ -41,15 +36,36 @@ class _BeaconsScanState extends State<BeaconsScan> {
     }
   }
 
+  // Future<void> ranging() async {
+  //   // if you need to monitor also major and minor use the original version and not this fork
+  //   BeaconsPlugin.addRegion("myBeacon", "01022022-f88f-0000-00ae-9605fd9bb620").then((result) {
+  //     print("hi range");
+  //   });
+  //
+  //   //Send 'true' to run in background [OPTIONAL]
+  //   await BeaconsPlugin.runInBackground(true);
+  //
+  //   //IMPORTANT: Start monitoring once scanner is setup & ready (only for Android)
+  //   if (Platform.isAndroid) {
+  //     BeaconsPlugin.channel.setMethodCallHandler((call) async {
+  //       if (call.method == 'scannerReady') {
+  //         await BeaconsPlugin.startMonitoring();
+  //       }
+  //     });
+  //   } else if (Platform.isIOS) {
+  //     await BeaconsPlugin.startMonitoring();
+  //   }
+  // }
+
   void scanResults(){
     final StreamController<String> beaconEventsController = StreamController<String>.broadcast();
-    flutterBeacon.requestAuthorization;
     BeaconsPlugin.listenToBeacons(beaconEventsController);
     print("Hear before listen");
     beaconEventsController.stream.listen((data) {
           if (data.isNotEmpty) {
             setState(() {
               var beaconResult = data;
+              detectedBeacons.add(data);
               print("Hi $beaconResult");
             });
 
@@ -73,7 +89,7 @@ class _BeaconsScanState extends State<BeaconsScan> {
           child: Column(
             children: [
               ElevatedButton(onPressed: (){
-                ranging();
+                // ranging();
               }, child: Text("range")),
               SizedBox(height: 50,),
               ElevatedButton(onPressed: (){

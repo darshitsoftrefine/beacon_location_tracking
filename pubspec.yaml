@@ -41,6 +41,7 @@ dependencies:
   cloud_firestore: ^4.8.2
   google_maps_flutter: ^2.3.0
   uuid: ^4.1.0
+  get: ^4.3.6
   beacon_broadcast: ^0.3.1
   flutter_beacon: ^0.5.1
   location: ^5.0.3

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:beacon_project/beacons/beacon_scanner.dart';
 import 'package:beacon_project/beacons/beacons_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,19 @@ class BeaconLibrary extends StatefulWidget {
 }
 
 class _BeaconLibraryState extends State<BeaconLibrary> {
+
+  final _regionBeacons = <Region, List<Beacon>>{};
+  StreamSubscription<RangingResult>? _streamRanging;
+
+  @override
+  void initState(){
+
+    super.initState();
+  }
+
+  startRanging(){
+
+  }
 
   Future<void> range() async {
     try {
@@ -39,16 +54,15 @@ class _BeaconLibraryState extends State<BeaconLibrary> {
       regions.add(Region(identifier: 'com.example.beacon_project'));
     }
 
-    print(regions);
+    print("Region print $regions");
 // to start ranging beacons
-    var streamRanging = flutterBeacon.ranging(regions).listen((RangingResult result) {
+    _streamRanging = flutterBeacon.ranging(regions).listen((RangingResult result) {
       // result contains a region and list of beacons found
-      print(result.beacons);
+      print("Result print ${result.beacons}");
       // list can be empty if no matching beacons were found in range
     });
 
-// to stop ranging beacons
-    streamRanging.cancel();
+    _streamRanging?.cancel();
   }
 
   void monitoringbeacon(){
@@ -62,12 +76,15 @@ class _BeaconLibraryState extends State<BeaconLibrary> {
     } else {
       // Android platform, it can ranging out of beacon that filter all of Proximity UUID
       regions.add(Region(identifier: 'com.example.beacon_project'));
+      print("Added regions");
     }
 
 // to start monitoring beacons
     var streamMonitoring = flutterBeacon.monitoring(regions).listen((MonitoringResult result) {
       // result contains a region, event type and event state
-      print(result.region);
+      print("Region ${result.region}");
+      print("Type ${result.monitoringEventType}");
+      print("State ${result.monitoringState}");
     });
     print(regions);
 // to stop monitoring beacons

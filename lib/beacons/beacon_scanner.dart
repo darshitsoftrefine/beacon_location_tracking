@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
+import 'package:uuid/uuid.dart';
 
 class BeaconScannerWidget extends StatefulWidget {
+  const BeaconScannerWidget({super.key});
+
   @override
-  _BeaconScannerWidgetState createState() => _BeaconScannerWidgetState();
+  BeaconScannerWidgetState createState() => BeaconScannerWidgetState();
 }
 
-class _BeaconScannerWidgetState extends State<BeaconScannerWidget> {
+class BeaconScannerWidgetState extends State<BeaconScannerWidget> {
 
   List detectedBeacons = [];
 
@@ -20,9 +23,9 @@ class _BeaconScannerWidgetState extends State<BeaconScannerWidget> {
     flutterBeacon.initializeAndCheckScanning;
 
     final regions = <Region>[];
-
+    var uuid = const Uuid();
     // Define the beacon regions you want to monitor here.
-    regions.add(Region(identifier: '100', proximityUUID: 'YOUR_UUID', major: 100, minor: 1));
+    regions.add(Region(identifier: 'com.example.beacon_project', proximityUUID: uuid.v1(), major: 100, minor: 1));
 
     flutterBeacon.ranging(regions).listen((RangingResult result) {
       if (result != null && result.beacons.isNotEmpty) {
@@ -30,14 +33,14 @@ class _BeaconScannerWidgetState extends State<BeaconScannerWidget> {
         print(result.beacons);
       }
     });
-    print("HI $detectedBeacons");
+    print("Hi $detectedBeacons");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Beacon Scanner'),
+        title: const Text('Beacon Scanner'),
       ),
       body: ListView.builder(
         shrinkWrap: true,
