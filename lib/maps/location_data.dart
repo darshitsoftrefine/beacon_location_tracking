@@ -1,6 +1,11 @@
+import 'package:beacon_project/views/app_broadcasting.dart';
+import 'package:beacon_project/views/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../controller/requirement_state_controller.dart';
 
 class LocationMap extends StatefulWidget {
   const LocationMap({Key? key}) : super(key: key);
@@ -9,8 +14,9 @@ class LocationMap extends StatefulWidget {
   LocationMapState createState() => LocationMapState();
 }
 
-class LocationMapState extends State<LocationMap> {
+class LocationMapState extends State<LocationMap> with WidgetsBindingObserver {
 // Declare the variables
+  final controller = Get.find<RequirementStateController>();
   late Location location;
   late LatLng currentPosition;
   late Marker marker;
@@ -94,6 +100,8 @@ class LocationMapState extends State<LocationMap> {
           height: 60,
           child: FloatingActionButton(onPressed: (){
             print(currentPosition);
+            //Navigate to broadcasting page
+            Get.to(HomePage());
           },
             tooltip: 'Open Google Maps',
             child: const Icon(Icons.share)

@@ -1,8 +1,11 @@
 import 'package:beacon_project/beacons/home_screen.dart';
+import 'package:beacon_project/views/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'beacons/beacon_library.dart';
 import 'beacons/beacons_scan.dart';
+import 'controller/requirement_state_controller.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +18,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    Get.put(RequirementStateController());
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BeaconLibrary()
+      home: HomeScreen()
     );
   }
 }

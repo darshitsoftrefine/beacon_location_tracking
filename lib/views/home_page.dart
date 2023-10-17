@@ -95,6 +95,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
         title: const Text('Flutter Beacon', style: TextStyle(color: Colors.black),),
         centerTitle: false,
         actions: <Widget>[

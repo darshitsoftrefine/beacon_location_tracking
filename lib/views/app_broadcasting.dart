@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 import '../controller/requirement_state_controller.dart';
 
@@ -17,11 +19,17 @@ class TabBroadcastingState extends State<TabBroadcasting> {
   final clearFocus = FocusNode();
   bool broadcasting = false;
 
+  int lat = 0;
+  int long = 0;
+  late Location location;
+  late LatLng currentPosition;
+  late Marker marker;
+  bool _isLoading = true;
   final regexUUID = RegExp(
       r'[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}');
   final uuidController = TextEditingController(text: 'CB10023F-A318-3394-4199-A8730C7C1AEC');
-  final majorController = TextEditingController(text: '0');
-  final minorController = TextEditingController(text: '0');
+  final majorController = TextEditingController();
+  final minorController = TextEditingController();
 
   bool get broadcastReady =>
       controller.authorizationStatusOk == true &&
@@ -31,7 +39,8 @@ class TabBroadcastingState extends State<TabBroadcasting> {
   @override
   void initState() {
     super.initState();
-
+    location = Location();
+    _getCurrentLocation();
     controller.startBroadcastStream.listen((flag) {
       if (flag == true) {
         initBroadcastBeacon();
@@ -116,7 +125,7 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         }
 
         try {
-          int major = int.parse(val);
+          int major = lat;
 
           if (major < 0 || major > 65535) {
             return 'Major must be number between 0 and 65535';
@@ -144,7 +153,7 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         }
 
         try {
-          int minor = int.parse(val);
+          int minor = long;
 
           if (minor < 0 || minor > 65535) {
             return 'Minor must be number between 0 and 65535';
@@ -172,6 +181,8 @@ class TabBroadcastingState extends State<TabBroadcasting> {
     return ElevatedButton(
       style: raisedButtonStyle,
       onPressed: () async {
+        print(lat);
+        print(long);
         if (broadcasting) {
           await flutterBeacon.stopBroadcast();
         } else {
@@ -192,5 +203,32 @@ class TabBroadcastingState extends State<TabBroadcasting> {
       },
       child: Text('Broadcast${broadcasting ? 'ing' : ''}'),
     );
+  }
+  void _getCurrentLocation() async {
+
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+// Request to enable location service
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+// Check if permission is granted
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+// Request for permission
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+// Get the location data
+    LocationData locationData = await location.getLocation();
+    lat = locationData.latitude!.round();
+    long = locationData.longitude!.round();
+// Set the current position and marker
+        currentPosition =
+            LatLng(locationData.latitude!, locationData.longitude!);
   }
 }
