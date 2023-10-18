@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
 
 import '../controller/requirement_state_controller.dart';
+import '../maps/location_tracking.dart';
 
 class TabScanning extends StatefulWidget {
   const TabScanning({super.key});
@@ -22,7 +23,6 @@ class TabScanningState extends State<TabScanning> {
   @override
   void initState() {
     super.initState();
-
     controller.startStream.listen((flag) {
       if (flag == true) {
         initScanBeacon();
@@ -67,11 +67,9 @@ class TabScanningState extends State<TabScanning> {
 
     _streamRanging =
         flutterBeacon.ranging(regions).listen((RangingResult result) {
-          print("Hi Result $result");
           if (mounted) {
             setState(() {
               _regionBeacons[result.region] = result.beacons;
-              _beacons.clear();
               _regionBeacons.values.forEach((list) {
                 _beacons.addAll(list);
               });
@@ -83,11 +81,6 @@ class TabScanningState extends State<TabScanning> {
 
   pauseScanBeacon() async {
     _streamRanging?.pause();
-    if (_beacons.isNotEmpty) {
-      setState(() {
-        _beacons.clear();
-      });
-    }
   }
 
   int _compareParameters(Beacon a, Beacon b) {
@@ -113,9 +106,7 @@ class TabScanningState extends State<TabScanning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _beacons.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
+      body: ListView(
         children: ListTile.divideTiles(
           context: context,
           tiles: _beacons.map(
@@ -143,7 +134,16 @@ class TabScanningState extends State<TabScanning> {
                         'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
                         style: const TextStyle(fontSize: 13.0),
                       ),
-                    )
+                    ),
+                    ElevatedButton(
+                        onPressed: () async {
+                          // SharedPreferences prefs = await SharedPreferences.getInstance();
+                          // prefs.setInt('latitude', beacon.major);
+                          // prefs.setInt('longitude', beacon.minor);
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => LocationTracking()),
+                          );
+                        }, child: Text("See Location"))
                   ],
                 ),
               );

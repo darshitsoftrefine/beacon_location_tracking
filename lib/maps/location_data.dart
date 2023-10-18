@@ -16,7 +16,6 @@ class LocationMap extends StatefulWidget {
 
 class LocationMapState extends State<LocationMap> with WidgetsBindingObserver {
 // Declare the variables
-  final controller = Get.find<RequirementStateController>();
   late Location location;
   late LatLng currentPosition;
   late Marker marker;

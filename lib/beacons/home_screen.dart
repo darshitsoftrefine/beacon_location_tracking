@@ -16,8 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
 
   var uuid = const Uuid();
-  int lat = 0;
-  int long = 0;
+  double lat = 0.0;
+  double long = 0.0;
 
   @override
   initState(){
@@ -102,8 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 50,),
           ElevatedButton(onPressed: () async {
             LocationData loc = await Location().getLocation();
-            lat = loc.latitude!.round();
-            long = loc.longitude!.round();
+            lat = loc.latitude!;
+            long = loc.longitude!;
             setState(() {
               locate(lat, long);
             });
@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<LocationData> locate(int lat, int long) async {
+  Future<LocationData> locate(double lat, double long) async {
     Location location = Location();
     bool serviceEnabled;
     PermissionStatus permissionGranted;
@@ -144,8 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     locationData = await location.getLocation();
-    lat = locationData.latitude!.round();
-    long = locationData.longitude!.round();
+    lat = locationData.latitude!;
+    long = locationData.longitude!;
     return locationData;
   }
 }

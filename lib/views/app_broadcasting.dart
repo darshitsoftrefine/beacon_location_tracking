@@ -4,6 +4,7 @@ import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/requirement_state_controller.dart';
 
@@ -24,7 +25,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
   late Location location;
   late LatLng currentPosition;
   late Marker marker;
-  bool _isLoading = true;
   final regexUUID = RegExp(
       r'[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}');
   final uuidController = TextEditingController(text: 'CB10023F-A318-3394-4199-A8730C7C1AEC');
@@ -181,8 +181,13 @@ class TabBroadcastingState extends State<TabBroadcasting> {
     return ElevatedButton(
       style: raisedButtonStyle,
       onPressed: () async {
-        print(lat);
-        print(long);
+        setState(() {
+          _getCurrentLocation();
+          print(lat);
+          print(long);
+          majorController.text = lat.toString();
+          minorController.text = long.toString();
+        });
         if (broadcasting) {
           await flutterBeacon.stopBroadcast();
         } else {
@@ -225,8 +230,13 @@ class TabBroadcastingState extends State<TabBroadcasting> {
     }
 // Get the location data
     LocationData locationData = await location.getLocation();
-    lat = locationData.latitude!.round();
-    long = locationData.longitude!.round();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      lat = locationData.latitude!.round();
+      long = locationData.longitude!.round();
+    });
+    prefs.setDouble('latitude', locationData.latitude!);
+    prefs.setDouble('longitude', locationData.longitude!);
 // Set the current position and marker
         currentPosition =
             LatLng(locationData.latitude!, locationData.longitude!);
