@@ -215,6 +215,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   handleOpenLocationSettings() async {
     if (Platform.isAndroid) {
       await flutterBeacon.openLocationSettings;
+      //await flutterBeacon.openBluetoothSettings;
     } else if (Platform.isIOS) {
       await showDialog(
         context: context,

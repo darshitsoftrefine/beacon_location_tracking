@@ -33,7 +33,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
     });
   }
 
-  static const LatLng current = LatLng(23.034296666666666, 72.50369833333333);
+  static const LatLng current = LatLng(48, 72.5333);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

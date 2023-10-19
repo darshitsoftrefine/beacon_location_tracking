@@ -1,4 +1,5 @@
 import 'package:beacon_project/beacons/home_screen.dart';
+import 'package:beacon_project/maps/location_tracking.dart';
 import 'package:beacon_project/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen()
+      home: HomePage()
     );
   }
 }

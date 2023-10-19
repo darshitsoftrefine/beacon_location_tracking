@@ -1,8 +1,7 @@
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class LocationTracking extends StatefulWidget {
 
   const LocationTracking({super.key});
@@ -16,6 +15,7 @@ class _LocationTrackingState extends State<LocationTracking> {
   late Location location;
   late LatLng currentPosition;
   late Marker marker;
+  var one = Get.arguments;
   bool _isLoading = true;
 
   @override
@@ -23,20 +23,21 @@ class _LocationTrackingState extends State<LocationTracking> {
     // TODO: implement initState
     super.initState();
     location = Location();
-    location.onLocationChanged.listen((event) {
-// Update the marker position
-      if(mounted) {
-        setState(() {
-          marker = Marker(
-            markerId: const MarkerId('current'),
-            position: LatLng(event.latitude!, event.longitude!),
-          );
-        });
-      }
-      print("Hi latitude ${event.latitude}");
-      print("Hi1 longitude ${event.longitude}");
-    });
+//     location.onLocationChanged.listen((event) {
+// // Update the marker position
+//       if(mounted) {
+//         setState(() {
+//           marker = Marker(
+//             markerId: const MarkerId('current'),
+//             position: LatLng(event.latitude!, event.longitude!),
+//           );
+//         });
+//       }
+//       // print("Hi latitude ${event.latitude}");
+//       // print("Hi1 longitude ${event.longitude}");
+//     });
     getLocationFromScan();
+    print(one);
   }
 
   @override
@@ -75,12 +76,10 @@ class _LocationTrackingState extends State<LocationTracking> {
         return;
       }
     }
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if(mounted){
       setState(() {
-        double? latitude = prefs.getDouble('latitude');
-        double? longitude = prefs.getDouble('longitude');
-        currentPosition = LatLng(latitude!, longitude!);
+        currentPosition = LatLng(23, 72);
 
         marker = Marker(
           markerId: const MarkerId('current'),
@@ -89,5 +88,6 @@ class _LocationTrackingState extends State<LocationTracking> {
         _isLoading = false;
       });
     }
+    print(currentPosition);
   }
 }

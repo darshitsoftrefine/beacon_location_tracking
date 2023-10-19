@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
-import 'package:uuid/uuid.dart';
 
 class BeaconScannerWidget extends StatefulWidget {
   const BeaconScannerWidget({super.key});
@@ -23,9 +22,8 @@ class BeaconScannerWidgetState extends State<BeaconScannerWidget> {
     flutterBeacon.initializeAndCheckScanning;
 
     final regions = <Region>[];
-    var uuid = const Uuid();
     // Define the beacon regions you want to monitor here.
-    regions.add(Region(identifier: 'com.example.beacon_project', proximityUUID: uuid.v1(), major: 100, minor: 1));
+    regions.add(Region(identifier: 'com.example.beacon_project', proximityUUID: 'dc', major: 100, minor: 1));
 
     flutterBeacon.ranging(regions).listen((RangingResult result) {
       if (result != null && result.beacons.isNotEmpty) {

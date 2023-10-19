@@ -4,7 +4,6 @@ import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/requirement_state_controller.dart';
 
@@ -65,7 +64,7 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         onTap: () => FocusScope.of(context).requestFocus(clearFocus),
         child: Obx(
               () => broadcastReady != true
-              ? const Center(child: Text('Please wait...'))
+              ? const Center(child: Text('Please wait... \nEnable Bluetooth and Location',))
               : Form(
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Container(
@@ -126,7 +125,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
 
         try {
           int major = lat;
-
           if (major < 0 || major > 65535) {
             return 'Major must be number between 0 and 65535';
           }
@@ -183,8 +181,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
       onPressed: () async {
         setState(() {
           _getCurrentLocation();
-          print(lat);
-          print(long);
           majorController.text = lat.toString();
           minorController.text = long.toString();
         });
@@ -192,12 +188,13 @@ class TabBroadcastingState extends State<TabBroadcasting> {
           await flutterBeacon.stopBroadcast();
         } else {
           await flutterBeacon.startBroadcast(BeaconBroadcast(
-            proximityUUID: uuidController.text,
+            proximityUUID: uuidController.text,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
             major: int.tryParse(majorController.text) ?? 0,
             minor: int.tryParse(minorController.text) ?? 0,
           ));
+          print("Major $majorController");
+          print("Minor $minorController");
         }
-
         final isBroadcasting = await flutterBeacon.isBroadcasting();
 
         if (mounted) {
@@ -230,13 +227,14 @@ class TabBroadcastingState extends State<TabBroadcasting> {
     }
 // Get the location data
     LocationData locationData = await location.getLocation();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       lat = locationData.latitude!.round();
       long = locationData.longitude!.round();
+
+      var dat = num.parse(locationData.latitude!.toStringAsFixed(5));
+      print("Dat : $dat");
     });
-    prefs.setDouble('latitude', locationData.latitude!);
-    prefs.setDouble('longitude', locationData.longitude!);
+
 // Set the current position and marker
         currentPosition =
             LatLng(locationData.latitude!, locationData.longitude!);

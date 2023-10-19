@@ -3,7 +3,6 @@ import 'package:beacon_project/beacons/beacon_library.dart';
 import 'package:beacon_project/maps/location_data.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
-import 'package:uuid/uuid.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
 
-  var uuid = const Uuid();
   double lat = 0.0;
   double long = 0.0;
 
@@ -29,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> beac() async {
     BeaconBroadcast beaconBroadcast = BeaconBroadcast();
-    beaconBroadcast.setUUID(uuid.v1())
+    beaconBroadcast.setUUID('v')
         .setMajorId(1)
         .setMinorId(100)
         .setTransmissionPower(-59)//iOS-only, optional
@@ -90,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ElevatedButton(onPressed: (){
             stop();
           }, child: const Text("Stop")),
-          Text(uuid.v1(),style: const TextStyle(fontSize: 20),),
+          Text('xcdb',style: const TextStyle(fontSize: 20),),
           const SizedBox(height: 50,),
           ElevatedButton(onPressed: (){
             Navigator.push(

@@ -1,6 +1,6 @@
+import 'package:beacon_project/views/app_broadcasting.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
 
@@ -106,7 +106,9 @@ class TabScanningState extends State<TabScanning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      body: _beacons.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
         children: ListTile.divideTiles(
           context: context,
           tiles: _beacons.map(
@@ -137,12 +139,9 @@ class TabScanningState extends State<TabScanning> {
                     ),
                     ElevatedButton(
                         onPressed: () async {
-                          // SharedPreferences prefs = await SharedPreferences.getInstance();
-                          // prefs.setInt('latitude', beacon.major);
-                          // prefs.setInt('longitude', beacon.minor);
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => LocationTracking()),
-                          );
+                          print("Major: ${beacon.major}");
+                              print("Minor: ${beacon.minor}");
+                         Get.to(LocationTracking());
                         }, child: Text("See Location"))
                   ],
                 ),
