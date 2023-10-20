@@ -1,8 +1,11 @@
+import 'package:beacon_project/beacons/beacon_notification.dart';
 import 'package:beacon_project/views/app_broadcasting.dart';
+import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../controller/requirement_state_controller.dart';
 import '../maps/location_tracking.dart';
@@ -47,6 +50,7 @@ class TabScanningState extends State<TabScanning> {
               'bluetoothEnabled=${controller.bluetoothEnabled}');
       return;
     }
+    await BeaconsPlugin.runInBackground(true);
     final regions = <Region>[
       Region(
         identifier: 'Cubeacon',
@@ -113,37 +117,52 @@ class TabScanningState extends State<TabScanning> {
           context: context,
           tiles: _beacons.map(
                 (beacon) {
-              return ListTile(
-                title: Text(
-                  beacon.proximityUUID,
-                  style: const TextStyle(fontSize: 15.0),
-                ),
-                subtitle: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Text(
-                        'Major: ${beacon.major}\nMinor: ${beacon.minor}',
-                        style: const TextStyle(fontSize: 13.0),
+              return VisibilityDetector(
+                key: Key('${_beacons.length}'),
+                onVisibilityChanged: (VisibilityInfo info) {
+                  if(info.visibleFraction > 0 ){
+                    NotifyService().showNotification(title: '${beacon.proximityUUID}', payload: '${beacon.accuracy}');
+                  }
+                },
+                child: ListTile(
+                  title: Text(
+                    beacon.proximityUUID,
+                    style: const TextStyle(fontSize: 15.0),
+                  ),
+                  subtitle: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Flexible(
+                        flex: 1,
+                        fit: FlexFit.tight,
+                        child: Text(
+                          'Major: ${beacon.major}\nMinor: ${beacon.minor}',
+                          style: const TextStyle(fontSize: 13.0),
+                        ),
                       ),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      fit: FlexFit.tight,
-                      child: Text(
-                        'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
-                        style: const TextStyle(fontSize: 13.0),
+                      Flexible(
+                        flex: 2,
+                        fit: FlexFit.tight,
+                        child: Text(
+                          'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
+                          style: const TextStyle(fontSize: 13.0),
+                        ),
                       ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          print("Major: ${beacon.major}");
+                      ElevatedButton(
+                          onPressed: () async {
+                            print("Major: ${beacon.major}");
                               print("Minor: ${beacon.minor}");
-                         Get.to(LocationTracking());
-                        }, child: Text("See Location"))
-                  ],
+                            double x = (beacon.major) / 1000;
+                              double y = (beacon.minor) / 100;
+                                print(x);
+                                  print(y);
+                           Get.to(LocationTracking(), arguments: [
+                             {'Latitude': x},
+                             {'Longitude': y}
+                           ]);
+                          }, child: Text("See Location"))
+                    ],
+                  ),
                 ),
               );
             },

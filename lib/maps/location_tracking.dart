@@ -17,12 +17,14 @@ class _LocationTrackingState extends State<LocationTracking> {
   late Marker marker;
   var one = Get.arguments;
   bool _isLoading = true;
+  dynamic argumentData = Get.arguments;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     location = Location();
+    print("Argument Data $argumentData");
 //     location.onLocationChanged.listen((event) {
 // // Update the marker position
 //       if(mounted) {
@@ -79,7 +81,7 @@ class _LocationTrackingState extends State<LocationTracking> {
 
     if(mounted){
       setState(() {
-        currentPosition = LatLng(23, 72);
+        currentPosition = LatLng(argumentData[0]['Latitude'], argumentData[1]['Longitude']);
 
         marker = Marker(
           markerId: const MarkerId('current'),

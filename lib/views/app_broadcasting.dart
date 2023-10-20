@@ -152,7 +152,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
 
         try {
           int minor = long;
-
           if (minor < 0 || minor > 65535) {
             return 'Minor must be number between 0 and 65535';
           }
@@ -210,7 +209,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
 
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
-// Request to enable location service
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
         return;
@@ -219,7 +217,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
 // Check if permission is granted
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
-// Request for permission
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
         return;
@@ -228,11 +225,35 @@ class TabBroadcastingState extends State<TabBroadcasting> {
 // Get the location data
     LocationData locationData = await location.getLocation();
     setState(() {
-      lat = locationData.latitude!.round();
-      long = locationData.longitude!.round();
+      String l = locationData.latitude!.toString();
+      List<String> z = l.split(".");
+      String l1 = z[0];
+      int v = l1.length;
+      print(l);
+      print("Before decimal latitude $v");
+      if(v == 2){
+        lat = int.parse(locationData.latitude!.toStringAsFixed(3).replaceAll(".", ""));
+      } else if(v == 1){
+        lat = int.parse(locationData.latitude!.toStringAsFixed(4).replaceAll(".", ""));
+      } else{
+        print("Not valid location");
+      }
+      String lo = locationData.longitude!.toString();
+      List<String> z1 = lo.split(".");
+      String l2 = z1[0];
+      int v1 = l2.length;
+      print(lo);
+      print("Before decimal longitude $v1");
 
-      var dat = num.parse(locationData.latitude!.toStringAsFixed(5));
-      print("Dat : $dat");
+      if(v1 == 2){
+        long = int.parse(locationData.longitude!.toStringAsFixed(2).replaceAll(".", ""));
+      } else if(v1 == 3){
+        long = int.parse(locationData.longitude!.toStringAsFixed(1).replaceAll(".", ""));
+      } else {
+        print("Not Valid location");
+      }
+      // lat = int.parse(locationData.latitude!.toStringAsFixed(3).replaceAll(".", ""));
+      //long = int.parse(locationData.longitude!.toStringAsFixed(2).replaceAll(".", ""));
     });
 
 // Set the current position and marker
