@@ -191,8 +191,8 @@ class TabBroadcastingState extends State<TabBroadcasting> {
             major: int.tryParse(majorController.text) ?? 0,
             minor: int.tryParse(minorController.text) ?? 0,
           ));
-          print("Major $majorController");
-          print("Minor $minorController");
+          debugPrint("Major $majorController");
+          debugPrint("Minor $minorController");
         }
         final isBroadcasting = await flutterBeacon.isBroadcasting();
 
@@ -229,28 +229,31 @@ class TabBroadcastingState extends State<TabBroadcasting> {
       List<String> z = l.split(".");
       String l1 = z[0];
       int v = l1.length;
-      print(l);
-      print("Before decimal latitude $v");
+      debugPrint(l);
+      debugPrint("Before decimal latitude $v");
       if(v == 2){
         lat = int.parse(locationData.latitude!.toStringAsFixed(3).replaceAll(".", ""));
       } else if(v == 1){
         lat = int.parse(locationData.latitude!.toStringAsFixed(4).replaceAll(".", ""));
       } else{
-        print("Not valid location");
+        debugPrint("Not valid location");
       }
       String lo = locationData.longitude!.toString();
       List<String> z1 = lo.split(".");
       String l2 = z1[0];
       int v1 = l2.length;
-      print(lo);
-      print("Before decimal longitude $v1");
+      debugPrint(lo);
+      debugPrint("Before decimal longitude $v1");
 
       if(v1 == 2){
         long = int.parse(locationData.longitude!.toStringAsFixed(2).replaceAll(".", ""));
       } else if(v1 == 3){
         long = int.parse(locationData.longitude!.toStringAsFixed(1).replaceAll(".", ""));
-      } else {
-        print("Not Valid location");
+      }else if(v1 == 1){
+        long = int.parse(locationData.longitude!.toStringAsFixed(3).replaceAll(".", ""));
+      }
+        else {
+        debugPrint("Not Valid location");
       }
       // lat = int.parse(locationData.latitude!.toStringAsFixed(3).replaceAll(".", ""));
       //long = int.parse(locationData.longitude!.toStringAsFixed(2).replaceAll(".", ""));

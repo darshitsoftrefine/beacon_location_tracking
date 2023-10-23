@@ -1,9 +1,9 @@
 import 'package:beacon_project/beacons/beacon_notification.dart';
-import 'package:beacon_project/views/app_broadcasting.dart';
 import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_beacon/flutter_beacon.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -22,6 +22,36 @@ class TabScanningState extends State<TabScanning> {
   final _regionBeacons = <Region, List<Beacon>>{};
   final _beacons = <Beacon>[];
   final controller = Get.find<RequirementStateController>();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+
+  showNotification() {
+    if (_beacons.isEmpty) {
+      return;
+    }
+
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      "ScheduleNotification001",
+      "Notify Me",
+      importance: Importance.high,
+    );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      macOS: null,
+      linux: null,
+    );
+
+
+
+    flutterLocalNotificationsPlugin.show(01, "A beacon is identified", "Please click to show more", notificationDetails);
+  }
+
+  void stopNotifications() async {
+    flutterLocalNotificationsPlugin.cancel(01);
+  }
 
   @override
   void initState() {
@@ -50,7 +80,7 @@ class TabScanningState extends State<TabScanning> {
               'bluetoothEnabled=${controller.bluetoothEnabled}');
       return;
     }
-    await BeaconsPlugin.runInBackground(true);
+    //await BeaconsPlugin.runInBackground(true);
     final regions = <Region>[
       Region(
         identifier: 'Cubeacon',
@@ -121,7 +151,7 @@ class TabScanningState extends State<TabScanning> {
                 key: Key('${_beacons.length}'),
                 onVisibilityChanged: (VisibilityInfo info) {
                   if(info.visibleFraction > 0 ){
-                    NotifyService().showNotification(title: '${beacon.proximityUUID}', payload: '${beacon.accuracy}');
+                    showNotification();
                   }
                 },
                 child: ListTile(
@@ -150,17 +180,14 @@ class TabScanningState extends State<TabScanning> {
                       ),
                       ElevatedButton(
                           onPressed: () async {
-                            print("Major: ${beacon.major}");
-                              print("Minor: ${beacon.minor}");
+
                             double x = (beacon.major) / 1000;
                               double y = (beacon.minor) / 100;
-                                print(x);
-                                  print(y);
-                           Get.to(LocationTracking(), arguments: [
+                           Get.to(const LocationTracking(), arguments: [
                              {'Latitude': x},
                              {'Longitude': y}
                            ]);
-                          }, child: Text("See Location"))
+                          }, child: const Text("See Location"))
                     ],
                   ),
                 ),

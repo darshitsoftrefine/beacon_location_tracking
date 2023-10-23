@@ -1,15 +1,12 @@
-import 'package:beacon_project/beacons/home_screen.dart';
-import 'package:beacon_project/maps/location_tracking.dart';
+import 'package:beacon_project/beacons/beacon_notification.dart';
 import 'package:beacon_project/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'beacons/beacon_library.dart';
-import 'beacons/beacons_scan.dart';
 import 'controller/requirement_state_controller.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  NotifyService().initNotification();
   runApp(const MyApp());
 }
 
@@ -26,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage()
+      home: const HomePage()
     );
   }
 }
