@@ -15,36 +15,19 @@ class _LocationTrackingState extends State<LocationTracking> {
   late Location location;
   late LatLng currentPosition;
   late Marker marker;
-  var one = Get.arguments;
   bool _isLoading = true;
   dynamic argumentData = Get.arguments;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     location = Location();
     print("Argument Data $argumentData");
-//     location.onLocationChanged.listen((event) {
-// // Update the marker position
-//       if(mounted) {
-//         setState(() {
-//           marker = Marker(
-//             markerId: const MarkerId('current'),
-//             position: LatLng(event.latitude!, event.longitude!),
-//           );
-//         });
-//       }
-//       // print("Hi latitude ${event.latitude}");
-//       // print("Hi1 longitude ${event.longitude}");
-//     });
     getLocationFromScan();
-    print(one);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     getLocationFromScan();
   }
@@ -54,8 +37,24 @@ class _LocationTrackingState extends State<LocationTracking> {
       appBar: AppBar(
         title: const Text("Location Tracking"),
       ),
-      body: _isLoading ? const Center(child: CircularProgressIndicator(),) : GoogleMap(initialCameraPosition: CameraPosition(target: currentPosition, zoom: 15),
+      body: _isLoading ? const Center(child: CircularProgressIndicator(),) :
+      GoogleMap(initialCameraPosition: CameraPosition(target: currentPosition, zoom: 15),
         markers: {marker},
+        // onTap: (currentPosition){
+        // showDialog(
+        //     context: context, builder: (BuildContext context) =>
+        //     AlertDialog(
+        //       title: Text("Beacon Information"),
+        //       content: Column(
+        //         children: [
+        //           Text("The UUID of the beacon is ${argumentData[2]['ProximityUUID']}"),
+        //           SizedBox(height: 20,),
+        //           Text("The coordinates of the beacon is Latitude  ${argumentData[0]['Latitude']} and Longitude ${argumentData[1]['Longitude']}"),
+        //         ],
+        //       ),
+        //     ));
+        // print("The UUID of the beacon is ${argumentData[2]['ProximityUUID']}");
+        // },
       ),
     );
   }
@@ -82,10 +81,23 @@ class _LocationTrackingState extends State<LocationTracking> {
     if(mounted){
       setState(() {
         currentPosition = LatLng(argumentData[0]['Latitude'], argumentData[1]['Longitude']);
-
         marker = Marker(
           markerId: const MarkerId('current'),
           position: currentPosition,
+          onTap: (){
+            showDialog(
+                context: context, builder: (BuildContext context) =>
+                AlertDialog(
+                  title: Text("Beacon Information"),
+                  content: Column(
+                    children: [
+                      Text("The UUID of the beacon is ${argumentData[2]['ProximityUUID']}"),
+                      SizedBox(height: 20,),
+                      Text("The coordinates of the beacon is Latitude  ${argumentData[0]['Latitude']} and Longitude ${argumentData[1]['Longitude']}"),
+                    ],
+                  ),
+                ));
+          }
         );
         _isLoading = false;
       });

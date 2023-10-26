@@ -23,36 +23,6 @@ class TabScanningState extends State<TabScanning> {
   final _beacons = <Beacon>[];
   final controller = Get.find<RequirementStateController>();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-
-  showNotification() {
-    if (_beacons.isEmpty) {
-      return;
-    }
-
-    const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(
-      "ScheduleNotification001",
-      "Notify Me",
-      importance: Importance.high,
-    );
-
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      macOS: null,
-      linux: null,
-    );
-
-
-
-    flutterLocalNotificationsPlugin.show(01, "A beacon is identified", "Please click to show more", notificationDetails);
-  }
-
-  void stopNotifications() async {
-    flutterLocalNotificationsPlugin.cancel(01);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -81,6 +51,8 @@ class TabScanningState extends State<TabScanning> {
       return;
     }
     //await BeaconsPlugin.runInBackground(true);
+    // BeaconsPlugin.setBackgroundScanPeriodForAndroid(
+    //     backgroundScanPeriod: 2200, backgroundBetweenScanPeriod: 10);
     final regions = <Region>[
       Region(
         identifier: 'Cubeacon',
@@ -99,14 +71,13 @@ class TabScanningState extends State<TabScanning> {
       }
     }
 
-    _streamRanging =
-        flutterBeacon.ranging(regions).listen((RangingResult result) {
+    _streamRanging = flutterBeacon.ranging(regions).listen((RangingResult result) {
           if (mounted) {
             setState(() {
               _regionBeacons[result.region] = result.beacons;
-              _regionBeacons.values.forEach((list) {
+              for (var list in _regionBeacons.values) {
                 _beacons.addAll(list);
-              });
+              }
               _beacons.sort(_compareParameters);
             });
           }
@@ -151,7 +122,12 @@ class TabScanningState extends State<TabScanning> {
                 key: Key('${_beacons.length}'),
                 onVisibilityChanged: (VisibilityInfo info) {
                   if(info.visibleFraction > 0 ){
-                    showNotification();
+                    //await BeaconsPlugin.runInBackground(true);
+                    NotifyService().showNotification(title: 'A beacon is identified',  body: "Please click to show more");
+                    BeaconsPlugin.setBackgroundScanPeriodForAndroid(
+                        backgroundScanPeriod: 2200, backgroundBetweenScanPeriod: 10);
+                    //showNotification();
+                    print("Hello notify");
                   }
                 },
                 child: ListTile(
@@ -180,18 +156,20 @@ class TabScanningState extends State<TabScanning> {
                       ),
                       ElevatedButton(
                           onPressed: () async {
-
                             double x = (beacon.major) / 1000;
                               double y = (beacon.minor) / 100;
                            Get.to(const LocationTracking(), arguments: [
                              {'Latitude': x},
-                             {'Longitude': y}
+                             {'Longitude': y},
+                             {'ProximityUUID': beacon.proximityUUID},
                            ]);
+                            _beacons.clear();
                           }, child: const Text("See Location"))
                     ],
                   ),
                 ),
               );
+
             },
           ),
         ).toList(),
