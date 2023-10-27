@@ -26,17 +26,18 @@ class TabScanningState extends State<TabScanning> {
   @override
   void initState() {
     super.initState();
+    controller.pauseStream.listen((flag) {
+      if (flag == true) {
+        pauseScanBeacon();
+      }
+    });
     controller.startStream.listen((flag) {
       if (flag == true) {
         initScanBeacon();
       }
     });
 
-    controller.pauseStream.listen((flag) {
-      if (flag == true) {
-        pauseScanBeacon();
-      }
-    });
+
   }
 
   initScanBeacon() async {
@@ -75,11 +76,12 @@ class TabScanningState extends State<TabScanning> {
           if (mounted) {
             setState(() {
               _regionBeacons[result.region] = result.beacons;
+              //_beacons.clear();
               for (var list in _regionBeacons.values) {
                 _beacons.addAll(list);
               }
-              _beacons.sort(_compareParameters);
             });
+            _beacons.sort(_compareParameters);
           }
         });
   }
@@ -90,15 +92,15 @@ class TabScanningState extends State<TabScanning> {
 
   int _compareParameters(Beacon a, Beacon b) {
     int compare = a.proximityUUID.compareTo(b.proximityUUID);
-
     if (compare == 0) {
       compare = a.major.compareTo(b.major);
     }
 
     if (compare == 0) {
       compare = a.minor.compareTo(b.minor);
+      //_streamRanging?.pause();
+      //_beacons.removeAt(1);
     }
-
     return compare;
   }
 
@@ -122,12 +124,9 @@ class TabScanningState extends State<TabScanning> {
                 key: Key('${_beacons.length}'),
                 onVisibilityChanged: (VisibilityInfo info) {
                   if(info.visibleFraction > 0 ){
+                    //pauseScanBeacon();
                     //await BeaconsPlugin.runInBackground(true);
                     NotifyService().showNotification(title: 'A beacon is identified',  body: "Please click to show more");
-                    BeaconsPlugin.setBackgroundScanPeriodForAndroid(
-                        backgroundScanPeriod: 2200, backgroundBetweenScanPeriod: 10);
-                    //showNotification();
-                    print("Hello notify");
                   }
                 },
                 child: ListTile(
@@ -163,16 +162,14 @@ class TabScanningState extends State<TabScanning> {
                              {'Longitude': y},
                              {'ProximityUUID': beacon.proximityUUID},
                            ]);
-                            _beacons.clear();
                           }, child: const Text("See Location"))
                     ],
                   ),
                 ),
               );
-
             },
           ),
-        ).toList(),
+        ).toSet().toList()
       ),
     );
   }
