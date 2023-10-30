@@ -26,7 +26,12 @@ class NotifyService {
       {int id = 0, String? title, String? body, String? payload }) async {
     return notificationsPlugin.show(id, title, body, await notificationDetails());
   }
+  Future cancelNotification({int id = 0}) async {
+    return notificationsPlugin.cancel(id);
+  }
 }
+
+
 
 notificationDetails() {
   return const NotificationDetails(

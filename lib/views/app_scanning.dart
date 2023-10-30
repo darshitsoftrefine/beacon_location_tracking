@@ -22,6 +22,8 @@ class TabScanningState extends State<TabScanning> {
   final _beacons = <Beacon>{};
   final controller = Get.find<RequirementStateController>();
 
+  bool isNotify = false;
+
   @override
   void initState() {
     super.initState();
@@ -108,8 +110,14 @@ class TabScanningState extends State<TabScanning> {
                 onVisibilityChanged: (VisibilityInfo info) {
                   if(info.visibleFraction > 0 ){
                     //await BeaconsPlugin.runInBackground(true);
+                    debugPrint("$Key('${_beacons.length}'),");
                     debugPrint("Hi $_beacons");
-                    NotifyService().showNotification(title: 'A beacon is identified',  body: "Please click to show more");
+                    if(isNotify == false){
+                      NotifyService().showNotification(title: 'A beacon is identified',  body: "Please click to show more");
+                      isNotify = true;
+                    } else if(_beacons.length > 1){
+                      isNotify = false;
+                    }
                   }
                 },
                 child: ListTile(
