@@ -44,7 +44,7 @@ class TabScanningState extends State<TabScanning> {
     if (!controller.authorizationStatusOk ||
         !controller.locationServiceEnabled ||
         !controller.bluetoothEnabled) {
-      print(
+      debugPrint(
           'RETURNED, authorizationStatusOk=${controller.authorizationStatusOk}, '
               'locationServiceEnabled=${controller.locationServiceEnabled}, '
               'bluetoothEnabled=${controller.bluetoothEnabled}');
@@ -152,7 +152,7 @@ class TabScanningState extends State<TabScanning> {
               );
             },
           ),
-        ).toList()
+        ).toSet().toList()
       ),
     );
   }

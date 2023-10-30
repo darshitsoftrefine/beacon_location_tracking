@@ -22,7 +22,7 @@ class _LocationTrackingState extends State<LocationTracking> {
   void initState() {
     super.initState();
     location = Location();
-    print("Argument Data $argumentData");
+    debugPrint("Argument Data $argumentData");
     getLocationFromScan();
   }
 
@@ -40,21 +40,6 @@ class _LocationTrackingState extends State<LocationTracking> {
       body: _isLoading ? const Center(child: CircularProgressIndicator(),) :
       GoogleMap(initialCameraPosition: CameraPosition(target: currentPosition, zoom: 15),
         markers: {marker},
-        // onTap: (currentPosition){
-        // showDialog(
-        //     context: context, builder: (BuildContext context) =>
-        //     AlertDialog(
-        //       title: Text("Beacon Information"),
-        //       content: Column(
-        //         children: [
-        //           Text("The UUID of the beacon is ${argumentData[2]['ProximityUUID']}"),
-        //           SizedBox(height: 20,),
-        //           Text("The coordinates of the beacon is Latitude  ${argumentData[0]['Latitude']} and Longitude ${argumentData[1]['Longitude']}"),
-        //         ],
-        //       ),
-        //     ));
-        // print("The UUID of the beacon is ${argumentData[2]['ProximityUUID']}");
-        // },
       ),
     );
   }
@@ -88,18 +73,18 @@ class _LocationTrackingState extends State<LocationTracking> {
             showDialog(
                 context: context, builder: (BuildContext context) =>
                 AlertDialog(
-                  insetPadding: EdgeInsets.all(20),
+                  insetPadding: const EdgeInsets.all(20),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                   ),
-                  title: Text("Beacon Information"),
-                  content: Container(
+                  title: const Text("Beacon Information"),
+                  content: SizedBox(
                     height: 200,
                     width: 200,
                     child: Column(
                       children: [
                         Text("The UUID of the beacon is ${argumentData[2]['ProximityUUID']}"),
-                        SizedBox(height: 20,),
+                        const SizedBox(height: 20,),
                         Text("The coordinates of the beacon is Latitude  ${argumentData[0]['Latitude']} and Longitude ${argumentData[1]['Longitude']}"),
                       ],
                     ),
@@ -107,7 +92,7 @@ class _LocationTrackingState extends State<LocationTracking> {
                   actions: [
                     TextButton(onPressed: (){
                       Navigator.pop(context);
-                    }, child: Text("Ok"))
+                    }, child: const Text("Ok"))
                   ],
                 ));
           }
@@ -115,6 +100,5 @@ class _LocationTrackingState extends State<LocationTracking> {
         _isLoading = false;
       });
     }
-    print(currentPosition);
   }
 }

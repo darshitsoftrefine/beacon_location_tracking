@@ -31,7 +31,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   listeningState() async {
-    print('Listening to bluetooth state');
+    debugPrint('Listening to bluetooth state');
     _streamBluetooth = flutterBeacon
         .bluetoothStateChanged()
         .listen((BluetoothState state) async {
@@ -43,37 +43,37 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   checkAllRequirements() async {
     final bluetoothState = await flutterBeacon.bluetoothState;
     controller.updateBluetoothState(bluetoothState);
-    print('BLUETOOTH $bluetoothState');
+    debugPrint('BLUETOOTH $bluetoothState');
 
     final authorizationStatus = await flutterBeacon.authorizationStatus;
     controller.updateAuthorizationStatus(authorizationStatus);
-    print('AUTHORIZATION $authorizationStatus');
+    debugPrint('AUTHORIZATION $authorizationStatus');
 
     final locationServiceEnabled =
     await flutterBeacon.checkLocationServicesIfEnabled;
     controller.updateLocationService(locationServiceEnabled);
-    print('LOCATION SERVICE $locationServiceEnabled');
+    debugPrint('LOCATION SERVICE $locationServiceEnabled');
 
     if (controller.bluetoothEnabled &&
         controller.authorizationStatusOk &&
         controller.locationServiceEnabled) {
-      print('STATE READY');
+      debugPrint('STATE READY');
       if (currentIndex == 0) {
-        print('SCANNING');
+        debugPrint('SCANNING');
         controller.startScanning();
       } else {
-        print('BROADCASTING');
+        debugPrint('BROADCASTING');
         controller.startBroadcasting();
       }
     } else {
-      print('STATE NOT READY');
+      debugPrint('STATE NOT READY');
       controller.pauseScanning();
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    print('AppLifecycleState = $state');
+    debugPrint('AppLifecycleState = $state');
     if (state == AppLifecycleState.resumed) {
       if (_streamBluetooth != null) {
         if (_streamBluetooth!.isPaused) {

@@ -25,7 +25,7 @@ class TabBroadcastingState extends State<TabBroadcasting> {
   late LatLng currentPosition;
   late Marker marker;
   final regexUUID = RegExp(
-      r'[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}');
+      r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}');
   final uuidController = TextEditingController(text: 'CB10023F-A318-3394-4199-A8730C7C1AEC');
   final majorController = TextEditingController();
   final minorController = TextEditingController();
@@ -166,8 +166,8 @@ class TabBroadcastingState extends State<TabBroadcasting> {
 
   Widget get buttonBroadcast {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      onPrimary: Colors.white,
-      primary: broadcasting ? Colors.red : Theme.of(context).primaryColor,
+      foregroundColor: Colors.white,
+      backgroundColor: broadcasting ? Colors.red : Theme.of(context).primaryColor,
       minimumSize: const Size(88, 36),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shape: const RoundedRectangleBorder(
