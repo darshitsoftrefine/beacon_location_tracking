@@ -1,9 +1,8 @@
+import 'dart:core';
 import 'package:beacon_project/beacons/beacon_notification.dart';
-import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_beacon/flutter_beacon.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -20,7 +19,7 @@ class TabScanning extends StatefulWidget {
 class TabScanningState extends State<TabScanning> {
   StreamSubscription<RangingResult>? _streamRanging;
   final _regionBeacons = <Region, List<Beacon>>{};
-  final _beacons = <Beacon>[];
+  final _beacons = <Beacon>{};
   final controller = Get.find<RequirementStateController>();
 
   @override
@@ -76,32 +75,16 @@ class TabScanningState extends State<TabScanning> {
           if (mounted) {
             setState(() {
               _regionBeacons[result.region] = result.beacons;
-              //_beacons.clear();
               for (var list in _regionBeacons.values) {
                 _beacons.addAll(list);
               }
             });
-            _beacons.sort(_compareParameters);
           }
         });
   }
 
   pauseScanBeacon() async {
     _streamRanging?.pause();
-  }
-
-  int _compareParameters(Beacon a, Beacon b) {
-    int compare = a.proximityUUID.compareTo(b.proximityUUID);
-    if (compare == 0) {
-      compare = a.major.compareTo(b.major);
-    }
-
-    if (compare == 0) {
-      compare = a.minor.compareTo(b.minor);
-      //_streamRanging?.pause();
-      //_beacons.removeAt(1);
-    }
-    return compare;
   }
 
   @override
@@ -124,8 +107,8 @@ class TabScanningState extends State<TabScanning> {
                 key: Key('${_beacons.length}'),
                 onVisibilityChanged: (VisibilityInfo info) {
                   if(info.visibleFraction > 0 ){
-                    //pauseScanBeacon();
                     //await BeaconsPlugin.runInBackground(true);
+                    debugPrint("Hi $_beacons");
                     NotifyService().showNotification(title: 'A beacon is identified',  body: "Please click to show more");
                   }
                 },
@@ -169,7 +152,7 @@ class TabScanningState extends State<TabScanning> {
               );
             },
           ),
-        ).toSet().toList()
+        ).toList()
       ),
     );
   }
