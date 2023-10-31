@@ -1,11 +1,9 @@
-import 'package:beacon_project/views/app_broadcasting.dart';
 import 'package:beacon_project/views/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../controller/requirement_state_controller.dart';
 
 class LocationMap extends StatefulWidget {
   const LocationMap({Key? key}) : super(key: key);

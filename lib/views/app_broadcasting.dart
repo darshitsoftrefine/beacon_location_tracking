@@ -24,8 +24,7 @@ class TabBroadcastingState extends State<TabBroadcasting> {
   late Location location;
   late LatLng currentPosition;
   late Marker marker;
-  final regexUUID = RegExp(
-      r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}');
+  final regexUUID = RegExp(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}');
   final uuidController = TextEditingController(text: 'CB10023F-A318-3394-4199-A8730C7C1AEC');
   final majorController = TextEditingController();
   final minorController = TextEditingController();
@@ -104,7 +103,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         if (!regexUUID.hasMatch(val)) {
           return 'Invalid Proxmity UUID format';
         }
-
         return null;
       },
     );
@@ -214,7 +212,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         return;
       }
     }
-// Check if permission is granted
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
@@ -222,7 +219,6 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         return;
       }
     }
-// Get the location data
     LocationData locationData = await location.getLocation();
     setState(() {
       String l = locationData.latitude!.toString();
@@ -255,12 +251,7 @@ class TabBroadcastingState extends State<TabBroadcasting> {
         else {
         debugPrint("Not Valid location");
       }
-      // lat = int.parse(locationData.latitude!.toStringAsFixed(3).replaceAll(".", ""));
-      //long = int.parse(locationData.longitude!.toStringAsFixed(2).replaceAll(".", ""));
     });
-
-// Set the current position and marker
-        currentPosition =
-            LatLng(locationData.latitude!, locationData.longitude!);
+        currentPosition = LatLng(locationData.latitude!, locationData.longitude!);
   }
 }

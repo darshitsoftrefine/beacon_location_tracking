@@ -47,16 +47,13 @@ class _LocationTrackingState extends State<LocationTracking> {
   void getLocationFromScan() async {
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
-// Request to enable location service
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
         return;
       }
     }
-// Check if permission is granted
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
-// Request for permission
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
         return;

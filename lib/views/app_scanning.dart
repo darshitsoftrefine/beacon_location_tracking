@@ -100,10 +100,8 @@ class TabScanningState extends State<TabScanning> {
           return VisibilityDetector(
             key: Key(key),
             onVisibilityChanged: (visibilityInfo) {
-                  //not been seen before
               if (visibilityInfo.visibleFraction > 0 && !seenKeys.contains(key)) {
                 debugPrint('${!seenKeys.contains(key)}');
-                    // Add the key to the seen set
                 seenKeys.add(key);
                 debugPrint('$seenKeys');
                 NotifyService().showNotification(
