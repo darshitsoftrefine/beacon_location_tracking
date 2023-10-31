@@ -1,11 +1,11 @@
 import 'dart:core';
-import 'package:beacon_project/beacons/beacon_notification.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:get/get.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../beacon_notification/beacon_notification.dart';
 import '../controller/requirement_state_controller.dart';
 import '../maps/location_tracking.dart';
 
@@ -21,24 +21,21 @@ class TabScanningState extends State<TabScanning> {
   final _regionBeacons = <Region, List<Beacon>>{};
   final _beacons = <Beacon>{};
   final controller = Get.find<RequirementStateController>();
-
-  bool isNotify = false;
+  Set<String> seenKeys = {};
 
   @override
   void initState() {
     super.initState();
-    controller.pauseStream.listen((flag) {
-      if (flag == true) {
-        pauseScanBeacon();
-      }
-    });
     controller.startStream.listen((flag) {
       if (flag == true) {
         initScanBeacon();
       }
     });
-
-
+    controller.pauseStream.listen((flag) {
+      if (flag == true) {
+        pauseScanBeacon();
+      }
+    });
   }
 
   initScanBeacon() async {
@@ -52,9 +49,7 @@ class TabScanningState extends State<TabScanning> {
               'bluetoothEnabled=${controller.bluetoothEnabled}');
       return;
     }
-    //await BeaconsPlugin.runInBackground(true);
-    // BeaconsPlugin.setBackgroundScanPeriodForAndroid(
-    //     backgroundScanPeriod: 2200, backgroundBetweenScanPeriod: 10);
+
     final regions = <Region>[
       Region(
         identifier: 'Cubeacon',
@@ -98,70 +93,65 @@ class TabScanningState extends State<TabScanning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _beacons.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-        children: ListTile.divideTiles(
-          context: context,
-          tiles: _beacons.map(
-                (beacon) {
-              return VisibilityDetector(
-                key: Key('${_beacons.length}'),
-                onVisibilityChanged: (VisibilityInfo info) {
-                  if(info.visibleFraction > 0 ){
-                    //await BeaconsPlugin.runInBackground(true);
-                    debugPrint("$Key('${_beacons.length}'),");
-                    debugPrint("Hi $_beacons");
-                    if(isNotify == false){
-                      NotifyService().showNotification(title: 'A beacon is identified',  body: "Please click to show more");
-                      isNotify = true;
-                    } else if(_beacons.length > 1){
-                      isNotify = false;
-                    }
-                  }
-                },
-                child: ListTile(
-                  title: Text(
-                    beacon.proximityUUID,
-                    style: const TextStyle(fontSize: 15.0),
-                  ),
-                  subtitle: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Flexible(
-                        flex: 1,
-                        fit: FlexFit.tight,
-                        child: Text(
-                          'Major: ${beacon.major}\nMinor: ${beacon.minor}',
-                          style: const TextStyle(fontSize: 13.0),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 2,
-                        fit: FlexFit.tight,
-                        child: Text(
-                          'Accuracy: ${beacon.accuracy}m\nRSSI: ${beacon.rssi}',
-                          style: const TextStyle(fontSize: 13.0),
-                        ),
-                      ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            double x = (beacon.major) / 1000;
-                              double y = (beacon.minor) / 100;
-                           Get.to(const LocationTracking(), arguments: [
-                             {'Latitude': x},
-                             {'Longitude': y},
-                             {'ProximityUUID': beacon.proximityUUID},
-                           ]);
-                          }, child: const Text("See Location"))
-                    ],
-                  ),
-                ),
-              );
+      body: _beacons.isEmpty ? const Center(child: CircularProgressIndicator()) : ListView.builder(
+        itemCount: _beacons.length,
+        itemBuilder: (BuildContext context, int index) {
+          String key = '_beacons-$index';
+          return VisibilityDetector(
+            key: Key(key),
+            onVisibilityChanged: (visibilityInfo) {
+                  //not been seen before
+              if (visibilityInfo.visibleFraction > 0 && !seenKeys.contains(key)) {
+                debugPrint('${!seenKeys.contains(key)}');
+                    // Add the key to the seen set
+                seenKeys.add(key);
+                debugPrint('$seenKeys');
+                NotifyService().showNotification(
+                    title: 'A beacon is identified',
+                    body: "The beacon id is ${_beacons.elementAt(index).proximityUUID} beacon",
+                    id: index);
+              }
             },
-          ),
-        ).toSet().toList()
-      ),
+            child: ListTile(
+              title: Text(
+                _beacons.elementAt(index).proximityUUID,
+                style: const TextStyle(fontSize: 15.0),
+              ),
+              subtitle: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: Text(
+                      'Major: ${_beacons.elementAt(index).major}\nMinor: ${_beacons.elementAt(index).minor}',
+                      style: const TextStyle(fontSize: 13.0),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 2,
+                    fit: FlexFit.tight,
+                    child: Text(
+                      'Accuracy: ${_beacons.elementAt(index).accuracy}m\nRSSI: ${_beacons.elementAt(index).rssi}',
+                      style: const TextStyle(fontSize: 13.0),
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        double x = (_beacons.elementAt(index).major) / 1000;
+                        double y = (_beacons.elementAt(index).minor) / 100;
+                        Get.to(() => const LocationTracking(), arguments: [
+                          {'Latitude': x},
+                          {'Longitude': y},
+                          {'ProximityUUID': _beacons.elementAt(index).proximityUUID},
+                        ]);
+                      }, child: const Text("See Location"))
+                ],
+              ),
+            ),
+          );
+        },
+      )
     );
   }
 }

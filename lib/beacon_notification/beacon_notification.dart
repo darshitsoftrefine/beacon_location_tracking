@@ -23,10 +23,10 @@ class NotifyService {
   }
 
   Future showNotification(
-      {int id = 0, String? title, String? body, String? payload }) async {
+      {required int id, String? title, String? body, String? payload }) async {
     return notificationsPlugin.show(id, title, body, await notificationDetails());
   }
-  Future cancelNotification({int id = 0}) async {
+  Future cancelNotification({required int id}) async {
     return notificationsPlugin.cancel(id);
   }
 }
