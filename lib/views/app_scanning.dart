@@ -76,6 +76,7 @@ class TabScanningState extends State<TabScanning> {
                 _beacons.addAll(list);
               }
             });
+            _beacons.toSet();
           }
         });
   }
